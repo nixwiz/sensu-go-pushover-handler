@@ -1,0 +1,210 @@
+{
+  "timestamp": 1550086289,
+  "entity": {
+    "entity_class": "agent",
+    "system": {
+      "hostname": "system1.example.com",
+      "os": "linux",
+      "platform": "ubuntu",
+      "platform_family": "debian",
+      "platform_version": "16.04",
+      "network": {
+        "interfaces": [
+          {
+            "name": "lo",
+            "addresses": [
+              "127.0.0.1/8",
+              "::1/128"
+            ]
+          },
+          {
+            "name": "eth0",
+            "mac": "12:d6:c0:d2:db:5c",
+            "addresses": [
+              "192.168.0.0/24",
+              "fe80::10d6:c0ff:fed2:db5c/64"
+            ]
+          }
+        ]
+      },
+      "arch": "amd64"
+    },
+    "subscriptions": [
+      "linux",
+      "entity:system1.example.com"
+    ],
+    "last_seen": 1549989797,
+    "deregister": false,
+    "deregistration": {},
+    "user": "agent",
+    "redact": [
+      "password",
+      "passwd",
+      "pass",
+      "api_key",
+      "api_token",
+      "access_key",
+      "secret_key",
+      "private_key",
+      "secret"
+    ],
+    "metadata": {
+      "name": "system1.example.com",
+      "namespace": "default",
+      "labels": {
+        "flowdock_Application": "webapp1",
+        "flowdock_Environment": "live"
+      }
+    }
+  },
+  "check": {
+    "command": "/opt/sensu-plugins-ruby/embedded/bin/check-cpu.rb -w {{ .labels.cpu_warning | default 90 }} -c {{ .labels.cpu_critical | default 95 }}",
+    "handlers": [
+      "mail",
+      "catmail"
+    ],
+    "high_flap_threshold": 0,
+    "interval": 60,
+    "low_flap_threshold": 0,
+    "publish": true,
+    "runtime_assets": null,
+    "subscriptions": [
+      "linux"
+    ],
+    "proxy_entity_name": "",
+    "check_hooks": [
+      {
+        "non-zero": [
+          "linux-process-list-cpu-hook"
+        ]
+      }
+    ],
+    "stdin": false,
+    "subdue": null,
+    "ttl": 0,
+    "timeout": 0,
+    "round_robin": false,
+    "duration": 5.121781847,
+    "executed": 1550086284,
+    "history": [
+      {
+        "status": 0,
+        "executed": 1550085084
+      },
+      {
+        "status": 0,
+        "executed": 1550085144
+      },
+      {
+        "status": 0,
+        "executed": 1550085204
+      },
+      {
+        "status": 0,
+        "executed": 1550085264
+      },
+      {
+        "status": 0,
+        "executed": 1550085324
+      },
+      {
+        "status": 0,
+        "executed": 1550085384
+      },
+      {
+        "status": 0,
+        "executed": 1550085444
+      },
+      {
+        "status": 0,
+        "executed": 1550085504
+      },
+      {
+        "status": 0,
+        "executed": 1550085564
+      },
+      {
+        "status": 0,
+        "executed": 1550085624
+      },
+      {
+        "status": 0,
+        "executed": 1550085684
+      },
+      {
+        "status": 0,
+        "executed": 1550085744
+      },
+      {
+        "status": 0,
+        "executed": 1550085804
+      },
+      {
+        "status": 0,
+        "executed": 1550085864
+      },
+      {
+        "status": 0,
+        "executed": 1550085924
+      },
+      {
+        "status": 0,
+        "executed": 1550085984
+      },
+      {
+        "status": 0,
+        "executed": 1550086044
+      },
+      {
+        "status": 0,
+        "executed": 1550086104
+      },
+      {
+        "status": 2,
+        "executed": 1550086164
+      },
+      {
+        "status": 2,
+        "executed": 1550086224
+      },
+      {
+        "status": 2,
+        "executed": 1550086284
+      }
+    ],
+    "issued": 1550086284,
+    "output": "CheckCPU TOTAL CRITICAL: total=100.0 user=45.69 nice=0.0 system=54.31 idle=0.0 iowait=0.0 irq=0.0 softirq=0.0 steal=0.0 guest=0.0 guest_nice=0.0\n",
+    "state": "failing",
+    "status": 2,
+    "total_state_change": 5,
+    "last_ok": 1550086109,
+    "occurrences": 3,
+    "occurrences_watermark": 10,
+    "hooks": [
+      {
+        "metadata": {
+          "name": "linux-process-list-cpu-hook",
+          "namespace": "default"
+        },
+        "command": "/usr/bin/top -b -n 1 -o '%CPU' | head -20",
+        "timeout": 30,
+        "stdin": false,
+        "duration": 0.173959962,
+        "executed": 1550086289,
+        "issued": 0,
+        "output": "top - 11:31:29 up 6 days,  4:01,  1 user,  load average: 4.54, 1.84, 0.69\nTasks: 148 total,   6 running, 142 sleeping,   0 stopped,   0 zombie\n%Cpu(s):  0.4 us,  0.1 sy,  0.0 ni, 99.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st\nKiB Mem :  1014436 total,   335716 free,   553888 used,   124832 buff/cache\nKiB Swap:        0 total,        0 free,        0 used.   297844 avail Mem \n\n  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND\n25473 root      20   0  269628 219028    996 R 20.0 21.6   0:27.05 stress\n25474 root      20   0    7480     92      0 R 20.0  0.0   0:27.05 stress\n25475 root      20   0  269628  27668    996 R 20.0  2.7   0:27.05 stress\n25471 root      20   0    7480     92      0 R 13.3  0.0   0:27.04 stress\n25472 root      20   0    7480     92      0 R 13.3  0.0   0:27.02 stress\n    1 root      20   0  119836   3888   1912 S  0.0  0.4   0:19.04 systemd\n    2 root      20   0       0      0      0 S  0.0  0.0   0:00.00 kthreadd\n    3 root      20   0       0      0      0 S  0.0  0.0   0:07.13 ksoftirqd/0\n    5 root       0 -20       0      0      0 S  0.0  0.0   0:00.00 kworker/0:0H\n    7 root      20   0       0      0      0 S  0.0  0.0   0:09.92 rcu_sched\n    8 root      20   0       0      0      0 S  0.0  0.0   0:00.00 rcu_bh\n    9 root      rt   0       0      0      0 S  0.0  0.0   0:00.00 migration/0\n   10 root      rt   0       0      0      0 S  0.0  0.0   0:02.40 watchdog/0\n",
+        "status": 0
+      }
+    ],
+    "output_metric_format": "",
+    "output_metric_handlers": null,
+    "env_vars": null,
+    "metadata": {
+      "name": "linux-cpu-check",
+      "namespace": "default"
+    }
+  },
+  "metadata": {
+    "namespace": "default"
+  }
+}

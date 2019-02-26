@@ -1,0 +1,210 @@
+{
+  "timestamp": 1550087386,
+  "entity": {
+    "entity_class": "agent",
+    "system": {
+      "hostname": "system2.example.com",
+      "os": "linux",
+      "platform": "ubuntu",
+      "platform_family": "debian",
+      "platform_version": "16.04",
+      "network": {
+        "interfaces": [
+          {
+            "name": "lo",
+            "addresses": [
+              "127.0.0.1/8",
+              "::1/128"
+            ]
+          },
+          {
+            "name": "eth0",
+            "mac": "12:d6:c0:d2:db:5c",
+            "addresses": [
+              "192.168.0.0/24",
+              "fe80::10d6:c0ff:fed2:db5c/64"
+            ]
+          }
+        ]
+      },
+      "arch": "amd64"
+    },
+    "subscriptions": [
+      "linux",
+      "entity:system2.example.com"
+    ],
+    "last_seen": 1549989797,
+    "deregister": false,
+    "deregistration": {},
+    "user": "agent",
+    "redact": [
+      "password",
+      "passwd",
+      "pass",
+      "api_key",
+      "api_token",
+      "access_key",
+      "secret_key",
+      "private_key",
+      "secret"
+    ],
+    "metadata": {
+      "name": "system2.example.com",
+      "namespace": "default",
+      "labels": {
+        "flowdock_Application": "webapp1",
+        "flowdock_Environment": "live"
+      }
+    }
+  },
+  "check": {
+    "command": "/opt/sensu-plugins-ruby/embedded/bin/check-memory-percent.rb {{ .labels.memory_warning | default 90 }} -c {{ .labels.memory_critical | default 95 }}",
+    "handlers": [
+      "mail",
+      "catmail"
+    ],
+    "high_flap_threshold": 0,
+    "interval": 60,
+    "low_flap_threshold": 0,
+    "publish": true,
+    "runtime_assets": null,
+    "subscriptions": [
+      "linux"
+    ],
+    "proxy_entity_name": "",
+    "check_hooks": [
+      {
+        "non-zero": [
+          "linux-process-list-mem-hook"
+        ]
+      }
+    ],
+    "stdin": false,
+    "subdue": null,
+    "ttl": 0,
+    "timeout": 0,
+    "round_robin": false,
+    "duration": 0.131951078,
+    "executed": 1550087386,
+    "history": [
+      {
+        "status": 0,
+        "executed": 1550086186
+      },
+      {
+        "status": 0,
+        "executed": 1550086246
+      },
+      {
+        "status": 1,
+        "executed": 1550086306
+      },
+      {
+        "status": 0,
+        "executed": 1550086366
+      },
+      {
+        "status": 0,
+        "executed": 1550086426
+      },
+      {
+        "status": 0,
+        "executed": 1550086486
+      },
+      {
+        "status": 0,
+        "executed": 1550086546
+      },
+      {
+        "status": 0,
+        "executed": 1550086606
+      },
+      {
+        "status": 0,
+        "executed": 1550086666
+      },
+      {
+        "status": 0,
+        "executed": 1550086726
+      },
+      {
+        "status": 0,
+        "executed": 1550086786
+      },
+      {
+        "status": 0,
+        "executed": 1550086846
+      },
+      {
+        "status": 0,
+        "executed": 1550086906
+      },
+      {
+        "status": 0,
+        "executed": 1550086966
+      },
+      {
+        "status": 0,
+        "executed": 1550087026
+      },
+      {
+        "status": 0,
+        "executed": 1550087086
+      },
+      {
+        "status": 0,
+        "executed": 1550087146
+      },
+      {
+        "status": 0,
+        "executed": 1550087206
+      },
+      {
+        "status": 0,
+        "executed": 1550087266
+      },
+      {
+        "status": 0,
+        "executed": 1550087326
+      },
+      {
+        "status": 1,
+        "executed": 1550087386
+      }
+    ],
+    "issued": 1550087386,
+    "output": "MEM WARNING - system memory usage: 82%\n",
+    "state": "failing",
+    "status": 1,
+    "total_state_change": 14,
+    "last_ok": 1550087326,
+    "occurrences": 1,
+    "occurrences_watermark": 2,
+    "hooks": [
+      {
+        "metadata": {
+          "name": "linux-process-list-mem-hook",
+          "namespace": "default"
+        },
+        "command": "/usr/bin/top -b -n 1 -o '%MEM' | head -20",
+        "timeout": 30,
+        "stdin": false,
+        "duration": 0.162813601,
+        "executed": 1550087386,
+        "issued": 0,
+        "output": "top - 11:49:46 up 6 days,  4:19,  1 user,  load average: 3.36, 2.01, 1.54\nTasks: 147 total,   6 running, 141 sleeping,   0 stopped,   0 zombie\n%Cpu(s):  0.5 us,  0.2 sy,  0.0 ni, 99.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st\nKiB Mem :  1014436 total,   348668 free,   547040 used,   118728 buff/cache\nKiB Swap:        0 total,        0 free,        0 used.   307800 avail Mem \n\n  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND\n26342 root      20   0  269628 230852    888 R 26.7 22.8   0:10.63 stress\n 1649 root      20   0  749572  82232   3292 S  0.0  8.1   4:58.94 salt-minion\n 1726 root      20   0  314576  50496    992 S  0.0  5.0   0:00.00 salt-minion\n 1207 root      20   0  222620  48436   2156 S  0.0  4.8   0:00.19 salt-minion\n 1472 root      20   0  362224  18088  11344 S  0.0  1.8   0:22.70 php-fpm7.0\n22310 sensu     20   0  122656  16672   2072 S  0.0  1.6   0:21.78 sensu-agent\n 1257 root      20   0  232980  14372      0 S  0.0  1.4   0:20.42 snapd\n 1470 root      20   0  540284  12416   3424 S  0.0  1.2   0:09.77 sssd_be\n 1760 vcache    20   0  286348  12160   1940 S  0.0  1.2   1:32.02 varnishd\n 1515 www-data  20   0  374472   8044   1292 S  0.0  0.8   0:00.00 php-fpm7.0\n 1516 www-data  20   0  374472   8044   1292 S  0.0  0.8   0:00.00 php-fpm7.0\n 1517 www-data  20   0  374472   8044   1292 S  0.0  0.8   0:00.00 php-fpm7.0\n 1518 www-data  20   0  374472   8044   1292 S  0.0  0.8   0:00.00 php-fpm7.0\n",
+        "status": 0
+      }
+    ],
+    "output_metric_format": "",
+    "output_metric_handlers": null,
+    "env_vars": null,
+    "metadata": {
+      "name": "linux-memory-check",
+      "namespace": "default"
+    }
+  },
+  "metadata": {
+    "namespace": "default"
+  }
+}

@@ -1,0 +1,194 @@
+{
+  "timestamp": 1550086349,
+  "entity": {
+    "entity_class": "agent",
+    "system": {
+      "hostname": "system1.example.com",
+      "os": "linux",
+      "platform": "ubuntu",
+      "platform_family": "debian",
+      "platform_version": "16.04",
+      "network": {
+        "interfaces": [
+          {
+            "name": "lo",
+            "addresses": [
+              "127.0.0.1/8",
+              "::1/128"
+            ]
+          },
+          {
+            "name": "eth0",
+            "mac": "12:d6:c0:d2:db:5c",
+            "addresses": [
+              "192.168.0.0/24",
+              "fe80::10d6:c0ff:fed2:db5c/64"
+            ]
+          }
+        ]
+      },
+      "arch": "amd64"
+    },
+    "subscriptions": [
+      "linux",
+      "entity:system1.example.com"
+    ],
+    "last_seen": 1549989797,
+    "deregister": false,
+    "deregistration": {},
+    "user": "agent",
+    "redact": [
+      "password",
+      "passwd",
+      "pass",
+      "api_key",
+      "api_token",
+      "access_key",
+      "secret_key",
+      "private_key",
+      "secret"
+    ],
+    "metadata": {
+      "name": "system1.example.com",
+      "namespace": "default",
+      "labels": {
+        "flowdock_Application": "webapp1",
+        "flowdock_Environment": "live"
+      }
+    }
+  },
+  "check": {
+    "command": "/opt/sensu-plugins-ruby/embedded/bin/check-cpu.rb -w {{ .labels.cpu_warning | default 90 }} -c {{ .labels.cpu_critical | default 95 }}",
+    "handlers": [
+      "mail",
+      "catmail"
+    ],
+    "high_flap_threshold": 0,
+    "interval": 60,
+    "low_flap_threshold": 0,
+    "publish": true,
+    "runtime_assets": null,
+    "subscriptions": [
+      "linux"
+    ],
+    "proxy_entity_name": "",
+    "check_hooks": [
+      {
+        "non-zero": [
+          "linux-process-list-cpu-hook"
+        ]
+      }
+    ],
+    "stdin": false,
+    "subdue": null,
+    "ttl": 0,
+    "timeout": 0,
+    "round_robin": false,
+    "duration": 5.072861457,
+    "executed": 1550086344,
+    "history": [
+      {
+        "status": 0,
+        "executed": 1550085144
+      },
+      {
+        "status": 0,
+        "executed": 1550085204
+      },
+      {
+        "status": 0,
+        "executed": 1550085264
+      },
+      {
+        "status": 0,
+        "executed": 1550085324
+      },
+      {
+        "status": 0,
+        "executed": 1550085384
+      },
+      {
+        "status": 0,
+        "executed": 1550085444
+      },
+      {
+        "status": 0,
+        "executed": 1550085504
+      },
+      {
+        "status": 0,
+        "executed": 1550085564
+      },
+      {
+        "status": 0,
+        "executed": 1550085624
+      },
+      {
+        "status": 0,
+        "executed": 1550085684
+      },
+      {
+        "status": 0,
+        "executed": 1550085744
+      },
+      {
+        "status": 0,
+        "executed": 1550085804
+      },
+      {
+        "status": 0,
+        "executed": 1550085864
+      },
+      {
+        "status": 0,
+        "executed": 1550085924
+      },
+      {
+        "status": 0,
+        "executed": 1550085984
+      },
+      {
+        "status": 0,
+        "executed": 1550086044
+      },
+      {
+        "status": 0,
+        "executed": 1550086104
+      },
+      {
+        "status": 2,
+        "executed": 1550086164
+      },
+      {
+        "status": 2,
+        "executed": 1550086224
+      },
+      {
+        "status": 2,
+        "executed": 1550086284
+      },
+      {
+        "status": 0,
+        "executed": 1550086344
+      }
+    ],
+    "issued": 1550086344,
+    "output": "CheckCPU TOTAL OK: total=2.6 user=1.6 nice=0.0 system=1.0 idle=97.2 iowait=0.2 irq=0.0 softirq=0.0 steal=0.0 guest=0.0 guest_nice=0.0\n",
+    "state": "passing",
+    "status": 0,
+    "total_state_change": 11,
+    "last_ok": 1550086349,
+    "occurrences": 1,
+    "occurrences_watermark": 10,
+    "output_metric_format": "",
+    "output_metric_handlers": null,
+    "env_vars": null,
+    "metadata": {
+      "name": "linux-cpu-check",
+      "namespace": "default"
+    }
+  },
+  "metadata": {
+    "namespace": "default"
+  }
+}
