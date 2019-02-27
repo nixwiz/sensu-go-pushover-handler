@@ -108,7 +108,7 @@ func sendPushover(event *types.Event) error {
 		priority string
 	)
 
-	if event.Check.Status < 3 {
+	if event.Check.Status < 3 && event.Check.Status > 0 {
 		priority = fmt.Sprint(event.Check.Status - 1)
 	} else {
 		priority = "0"
