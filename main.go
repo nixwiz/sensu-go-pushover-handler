@@ -26,6 +26,10 @@ var (
 	pushoverUserKey      string
 	messageBodyTemplate  string
 	messageTitleTemplate string
+	okPriority           int8
+	warningPriority      int8
+	criticalPriority     int8
+	unknownPriority      int8
 	stdin                *os.File
 )
 
@@ -41,6 +45,10 @@ func main() {
 	cmd.Flags().StringVarP(&pushoverUserKey, "pushoverUserKey", "u", os.Getenv("PUSHOVER_USERKEY"), "The Pushover User Key, if not in env PUSHOVER_USERKEY")
 	cmd.Flags().StringVarP(&messageTitleTemplate, "messageTitle", "m", "{{.Entity.Name}}/{{.Check.Name}}", "The message title, in token substitution format")
 	cmd.Flags().StringVarP(&messageBodyTemplate, "messageBody", "b", "{{.Check.Output}}", "The message body, in token substitution format")
+	cmd.Flags().Int8VarP(&okPriority, "okPriority", "O", 0, "The priority for OK status messages (default 0)")
+	cmd.Flags().Int8VarP(&warningPriority, "warningPriority", "W", 0, "The priority for Warning status messages (default 0)")
+	cmd.Flags().Int8VarP(&criticalPriority, "criticalPriority", "C", 1, "The priority for Critical status messages")
+	cmd.Flags().Int8VarP(&unknownPriority, "unknownPriority", "U", 1, "The priority for Unknown status messages")
 	cmd.Execute()
 
 }
@@ -108,10 +116,15 @@ func sendPushover(event *types.Event) error {
 		priority string
 	)
 
-	if event.Check.Status < 3 && event.Check.Status > 0 {
-		priority = fmt.Sprint(event.Check.Status - 1)
-	} else {
-		priority = "0"
+	switch event.Check.Status {
+	case 0:
+		priority = fmt.Sprint(okPriority)
+	case 1:
+		priority = fmt.Sprint(warningPriority)
+	case 2:
+		priority = fmt.Sprint(criticalPriority)
+	default:
+		priority = fmt.Sprint(unknownPriority)
 	}
 
 	messageTitle, titleErr := resolveTemplate(messageTitleTemplate, event)

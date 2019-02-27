@@ -57,11 +57,15 @@ Usage:
   sensu-pushover-handler [flags]
 
 Flags:
+  -C, --criticalPriority int8    The priority for Critical status messages (default 1)
   -h, --help                     help for sensu-pushover-handler
   -b, --messageBody string       The message body, in token substitution format (default "{{.Check.Output}}")
   -m, --messageTitle string      The message title, in token substitution format (default "{{.Entity.Name}}/{{.Check.Name}}")
+  -O, --okPriority int8          The priority for OK status messages (default 0)
   -t, --pushoverToken string     The Pushover API token, if not in env PUSHOVER_TOKEN
   -u, --pushoverUserKey string   The Pushover User Key, if not in env PUSHOVER_USERKEY
+  -U, --unknownPriority int8     The priority for Unknown status messages (default 1)
+  -W, --warningPriority int8     The priority for Warning status messages (default 0)
 ```
 
 #### Use of tokens
