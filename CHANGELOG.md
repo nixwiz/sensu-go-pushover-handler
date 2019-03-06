@@ -7,6 +7,8 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [0.3.0] - 03/05/2019
+
 ### Changed
 - Changed the environment variables for consistency
 - Updated the sample events
