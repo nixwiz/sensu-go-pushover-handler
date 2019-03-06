@@ -62,8 +62,8 @@ Flags:
   -b, --messageBody string       The message body, in token substitution format (default "{{.Check.Output}}")
   -m, --messageTitle string      The message title, in token substitution format (default "{{.Entity.Name}}/{{.Check.Name}}")
   -O, --okPriority int8          The priority for OK status messages (default 0)
-  -t, --pushoverToken string     The Pushover API token, if not in env PUSHOVER_TOKEN
-  -u, --pushoverUserKey string   The Pushover User Key, if not in env PUSHOVER_USERKEY
+  -t, --pushoverToken string     The Pushover API token, if not in env SENSU_PUSHOVER_TOKEN
+  -u, --pushoverUserKey string   The Pushover User Key, if not in env SENSU_PUSHOVER_USERKEY
   -U, --unknownPriority int8     The priority for Unknown status messages (default 1)
   -W, --warningPriority int8     The priority for Warning status messages (default 0)
 ```
@@ -72,13 +72,16 @@ Flags:
 
 For defining the message title and body, [tokens][4] from the [events attributes][6] are used.
 
-#### Environment Variables
-|Variable|Setting|
-|--------------------|-------|
-|PUSHOVER_TOKEN| same as -t / --pushoverToken|
-|PUSHOVER_USERKEY|same as -u / --pushoverUserKey|
+#### Environment Variables and Annotations
+|Variable|Setting|Annotation|
+|--------------------|-------|------|
+|PUSHOVER_TOKEN| same as -t / --pushoverToken|sensu.io/plugins/pushover/config/token|
+|PUSHOVER_USERKEY|same as -u / --pushoverUserKey|sensu.io/plugins/pushover/config/user-key|
+|N/A|same as -b / --messageBody|sensu.io/plugins/pushover/config/body-template|
+|N/A|same as -m / --messageTitle|sensu.io/plugins/pushover/config/title-template|
 
 **Note:**  The command line arguments take precedence over the environment variables above.
+**Note:**  Annotations take precedence over command line arguments above.
 
 [1]: https://docs.sensu.io/sensu-go/5.2/reference/handlers/#how-do-sensu-handlers-work
 [2]: https://pushover.net/api

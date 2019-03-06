@@ -51,9 +51,9 @@
     "metadata": {
       "name": "system1.example.com",
       "namespace": "default",
-      "labels": {
-        "flowdock_Application": "webapp1",
-        "flowdock_Environment": "live"
+      "labels": null,
+      "annotations": {
+        "sensu.io/plugins/pushover/config/title-template": "Sensu Alert - {{.Entity.Name}}/{{.Check.Name}}: {{.Check.State}}"
       }
     }
   },
@@ -72,13 +72,7 @@
       "linux"
     ],
     "proxy_entity_name": "",
-    "check_hooks": [
-      {
-        "non-zero": [
-          "linux-process-list-cpu-hook"
-        ]
-      }
-    ],
+    "check_hooks": null,
     "stdin": false,
     "subdue": null,
     "ttl": 0,

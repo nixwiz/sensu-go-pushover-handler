@@ -1,18 +1,16 @@
 package main
 
-// build the form
-// provide better usage (can i add extra text lines)
-// better arg checking
-
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"text/template"
 
 	"github.com/sensu/sensu-go/types"
@@ -21,16 +19,40 @@ import (
 
 const pushoverAPIURL string = "https://api.pushover.net/1/messages"
 
+type HandlerConfigOption struct {
+	Value string
+	Path  string
+	Env   string
+}
+
+type HandlerConfig struct {
+	PushoverToken        HandlerConfigOption
+	PushoverUserKey      HandlerConfigOption
+	MessageBodyTemplate  HandlerConfigOption
+	MessageTitleTemplate HandlerConfigOption
+	Keyspace             string
+}
+
 var (
-	pushoverToken        string
-	pushoverUserKey      string
-	messageBodyTemplate  string
-	messageTitleTemplate string
-	okPriority           int8
-	warningPriority      int8
-	criticalPriority     int8
-	unknownPriority      int8
-	stdin                *os.File
+	okPriority       int8
+	warningPriority  int8
+	criticalPriority int8
+	unknownPriority  int8
+	stdin            *os.File
+
+	config = HandlerConfig{
+		PushoverToken:        HandlerConfigOption{Path: "token", Env: "SENSU_PUSHOVER_TOKEN"},
+		PushoverUserKey:      HandlerConfigOption{Path: "user-key", Env: "SENSU_PUSHOVER_USERKEY"},
+		MessageBodyTemplate:  HandlerConfigOption{Value: "{{.Check.Output}}", Path: "body-template"},
+		MessageTitleTemplate: HandlerConfigOption{Value: "{{.Entity.Name}}/{{.Check.Name}}", Path: "title-template"},
+		Keyspace:             "sensu.io/plugins/pushover/config",
+	}
+	options = []*HandlerConfigOption{
+		&config.PushoverToken,
+		&config.PushoverUserKey,
+		&config.MessageBodyTemplate,
+		&config.MessageTitleTemplate,
+	}
 )
 
 func main() {
@@ -41,10 +63,10 @@ func main() {
 		RunE:  run,
 	}
 
-	cmd.Flags().StringVarP(&pushoverToken, "pushoverToken", "t", os.Getenv("PUSHOVER_TOKEN"), "The Pushover API token, if not in env PUSHOVER_TOKEN")
-	cmd.Flags().StringVarP(&pushoverUserKey, "pushoverUserKey", "u", os.Getenv("PUSHOVER_USERKEY"), "The Pushover User Key, if not in env PUSHOVER_USERKEY")
-	cmd.Flags().StringVarP(&messageTitleTemplate, "messageTitle", "m", "{{.Entity.Name}}/{{.Check.Name}}", "The message title, in token substitution format")
-	cmd.Flags().StringVarP(&messageBodyTemplate, "messageBody", "b", "{{.Check.Output}}", "The message body, in token substitution format")
+	cmd.Flags().StringVarP(&config.PushoverToken.Value, "pushoverToken", "t", os.Getenv("SENSU_PUSHOVER_TOKEN"), "The Pushover API token, if not in env SENSU_PUSHOVER_TOKEN")
+	cmd.Flags().StringVarP(&config.PushoverUserKey.Value, "pushoverUserKey", "u", os.Getenv("SENSU_PUSHOVER_USERKEY"), "The Pushover User Key, if not in env SENSU_PUSHOVER_USERKEY")
+	cmd.Flags().StringVarP(&config.MessageTitleTemplate.Value, "messageTitle", "m", config.MessageTitleTemplate.Value, "The message title, in token substitution format")
+	cmd.Flags().StringVarP(&config.MessageBodyTemplate.Value, "messageBody", "b", config.MessageBodyTemplate.Value, "The message body, in token substitution format")
 	cmd.Flags().Int8VarP(&okPriority, "okPriority", "O", 0, "The priority for OK status messages (default 0)")
 	cmd.Flags().Int8VarP(&warningPriority, "warningPriority", "W", 0, "The priority for Warning status messages (default 0)")
 	cmd.Flags().Int8VarP(&criticalPriority, "criticalPriority", "C", 1, "The priority for Critical status messages")
@@ -54,11 +76,6 @@ func main() {
 }
 
 func run(cmd *cobra.Command, args []string) error {
-
-	validationError := checkArgs()
-	if validationError != nil {
-		return validationError
-	}
 
 	if stdin == nil {
 		stdin = os.Stdin
@@ -83,6 +100,13 @@ func run(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("event does not contain check")
 	}
 
+	configurationOverrides(&config, options, event)
+
+	validationError := checkArgs()
+	if validationError != nil {
+		return validationError
+	}
+
 	pushoverError := sendPushover(event)
 	if pushoverError != nil {
 		return fmt.Errorf("failed to send to Pushover: %s", pushoverError)
@@ -94,16 +118,16 @@ func run(cmd *cobra.Command, args []string) error {
 
 func checkArgs() error {
 
-	if len(pushoverToken) == 0 {
+	if len(config.PushoverToken.Value) == 0 {
 		return errors.New("missing Pushover token")
 	}
-	if len(pushoverUserKey) == 0 {
+	if len(config.PushoverUserKey.Value) == 0 {
 		return errors.New("missing Pushover user key")
 	}
-	if len(messageTitleTemplate) == 0 {
+	if len(config.MessageTitleTemplate.Value) == 0 {
 		return errors.New("missing message title template")
 	}
-	if len(messageBodyTemplate) == 0 {
+	if len(config.MessageBodyTemplate.Value) == 0 {
 		return errors.New("missing message body template")
 	}
 
@@ -127,19 +151,19 @@ func sendPushover(event *types.Event) error {
 		priority = fmt.Sprint(unknownPriority)
 	}
 
-	messageTitle, titleErr := resolveTemplate(messageTitleTemplate, event)
+	messageTitle, titleErr := resolveTemplate(config.MessageTitleTemplate.Value, event)
 	if titleErr != nil {
 		return titleErr
 	}
 
-	messageBody, bodyErr := resolveTemplate(messageBodyTemplate, event)
+	messageBody, bodyErr := resolveTemplate(config.MessageBodyTemplate.Value, event)
 	if bodyErr != nil {
 		return bodyErr
 	}
 
 	pushoverForm := url.Values{}
-	pushoverForm.Add("token", pushoverToken)
-	pushoverForm.Add("user", pushoverUserKey)
+	pushoverForm.Add("token", config.PushoverToken.Value)
+	pushoverForm.Add("user", config.PushoverUserKey.Value)
 	pushoverForm.Add("priority", priority)
 	pushoverForm.Add("title", messageTitle)
 	pushoverForm.Add("message", messageBody)
@@ -168,4 +192,24 @@ func resolveTemplate(templateValue string, event *types.Event) (string, error) {
 	}
 
 	return resolved.String(), nil
+}
+
+func configurationOverrides(config *HandlerConfig, options []*HandlerConfigOption, event *types.Event) {
+	if config.Keyspace == "" {
+		return
+	}
+	for _, opt := range options {
+		if opt.Path != "" {
+			// compile the Annotation keyspace to look for configuration overrides
+			k := path.Join(config.Keyspace, opt.Path)
+			switch {
+			case event.Check.Annotations[k] != "":
+				opt.Value = event.Check.Annotations[k]
+				log.Printf("Overriding default handler configuration with value of \"Check.Annotations.%s\" (\"%s\")\n", k, event.Check.Annotations[k])
+			case event.Entity.Annotations[k] != "":
+				opt.Value = event.Entity.Annotations[k]
+				log.Printf("Overriding default handler configuration with value of \"Entity.Annotations.%s\" (\"%s\")\n", k, event.Entity.Annotations[k])
+			}
+		}
+	}
 }

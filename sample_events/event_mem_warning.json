@@ -51,10 +51,7 @@
     "metadata": {
       "name": "system2.example.com",
       "namespace": "default",
-      "labels": {
-        "flowdock_Application": "webapp1",
-        "flowdock_Environment": "live"
-      }
+      "labels": null
     }
   },
   "check": {
@@ -72,13 +69,7 @@
       "linux"
     ],
     "proxy_entity_name": "",
-    "check_hooks": [
-      {
-        "non-zero": [
-          "linux-process-list-mem-hook"
-        ]
-      }
-    ],
+    "check_hooks": null,
     "stdin": false,
     "subdue": null,
     "ttl": 0,
