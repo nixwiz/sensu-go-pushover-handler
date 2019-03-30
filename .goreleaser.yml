@@ -24,7 +24,8 @@ builds:
       goarch: arm
 
 checksum:
-  name_template: "{{ .ProjectName }}_v{{ .Version }}_sha256-checksums.txt"
+  name_template: "{{ .ProjectName }}_v{{ .Version }}_sha512-checksums.txt"
+  algorithm: sha512
 
 archive:
   format: tar.gz
