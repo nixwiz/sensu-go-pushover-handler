@@ -24,10 +24,11 @@ builds:
       goarch: arm
 
 checksum:
-  name_template: "{{ .ProjectName }}_{{ .Version }}_sha256-checksums.txt"
+  name_template: "{{ .ProjectName }}_v{{ .Version }}_sha256-checksums.txt"
 
 archive:
   format: tar.gz
+  name_template: "{{ .ProjectName }}_v{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm}}v{{ .Arm }}{{ end }}"
   files:
     - LICENSE
     - README.md
