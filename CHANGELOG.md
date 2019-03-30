@@ -7,6 +7,14 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [0.3.1] - 03/29/2019
+
+### Changed
+- Updated .goreleaser.yml to fix versioning and sha512 checksum
+
+### Added
+- Sensu bonsai
+
 ## [0.3.0] - 03/05/2019
 
 ### Changed
