@@ -30,8 +30,8 @@ Example Sensu Go definition:
         "command": "sensu-pushover-handler",
         "timeout": 10,
         "env_vars": [
-            "PUSHOVER_TOKEN=a0b1c2d3e4f5g6h7i8j9k0l1m2n3o4",
-            "PUSHOVER_USERKEY=a0b1c2d3e4f5g6h7i8j9k0l1m"
+            "SENSU_PUSHOVER_TOKEN=a0b1c2d3e4f5g6h7i8j9k0l1m2n3o4",
+            "SENSU_PUSHOVER_USERKEY=a0b1c2d3e4f5g6h7i8j9k0l1m"
         ],
         "filters": [
             "is_incident",
@@ -75,8 +75,8 @@ For defining the message title and body, [tokens][4] from the [events attributes
 #### Environment Variables and Annotations
 |Variable|Setting|Annotation|
 |--------------------|-------|------|
-|PUSHOVER_TOKEN| same as -t / --pushoverToken|sensu.io/plugins/pushover/config/token|
-|PUSHOVER_USERKEY|same as -u / --pushoverUserKey|sensu.io/plugins/pushover/config/user-key|
+|SENSU_PUSHOVER_TOKEN| same as -t / --pushoverToken|sensu.io/plugins/pushover/config/token|
+|SENSU_PUSHOVER_USERKEY|same as -u / --pushoverUserKey|sensu.io/plugins/pushover/config/user-key|
 |N/A|same as -b / --messageBody|sensu.io/plugins/pushover/config/body-template|
 |N/A|same as -m / --messageTitle|sensu.io/plugins/pushover/config/title-template|
 
