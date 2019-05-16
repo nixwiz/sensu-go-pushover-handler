@@ -7,6 +7,11 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [0.3.2] - 05/16/2019
+
+### Changed
+- Updated README.md for incorrect env variables, and need to roll version to update bonsai
+
 ## [0.3.1] - 03/29/2019
 
 ### Changed
