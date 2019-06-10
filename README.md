@@ -27,7 +27,7 @@ Example Sensu Go definition:
     },
     "spec": {
         "type": "pipe",
-        "command": "sensu-pushover-handler",
+        "command": "sensu-go-pushover-handler",
         "timeout": 10,
         "env_vars": [
             "SENSU_PUSHOVER_TOKEN=a0b1c2d3e4f5g6h7i8j9k0l1m2n3o4",
@@ -36,6 +36,9 @@ Example Sensu Go definition:
         "filters": [
             "is_incident",
             "not_silenced"
+        ],
+        "runtime_assets": [
+            "sensu-go-pushover-handler"
         ]
     }
 }
@@ -81,6 +84,7 @@ For defining the message title and body, [tokens][4] from the [events attributes
 |N/A|same as -m / --messageTitle|sensu.io/plugins/pushover/config/title-template|
 
 **Note:**  The command line arguments take precedence over the environment variables above.
+
 **Note:**  Annotations take precedence over command line arguments above.
 
 [1]: https://docs.sensu.io/sensu-go/5.2/reference/handlers/#how-do-sensu-handlers-work
