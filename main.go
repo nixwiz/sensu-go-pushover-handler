@@ -58,7 +58,7 @@ var (
 func main() {
 
 	cmd := &cobra.Command{
-		Use:   "sensu-pushover-handler",
+		Use:   "sensu-go-pushover-handler",
 		Short: "The Sensu Pushover handler for sending notifications",
 		RunE:  run,
 	}

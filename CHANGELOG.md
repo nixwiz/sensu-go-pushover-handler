@@ -7,6 +7,11 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [0.3.3] - 06/10/2019
+
+### Changed
+- Updated README.md and main.go for program name to be consistent
+
 ## [0.3.2] - 05/16/2019
 
 ### Changed

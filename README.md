@@ -10,7 +10,7 @@ Create an executable script from this source or download one of the existing [re
 From the local path of the sensu-go-pushover-handler repository:
 
 ```
-go build -o /usr/local/bin/sensu-pushover-handler main.go
+go build -o /usr/local/bin/sensu-go-pushover-handler main.go
 ```
 
 ## Sensu Configuration
@@ -57,11 +57,11 @@ a user API key.
 The Sensu Pushover handler for sending notifications
 
 Usage:
-  sensu-pushover-handler [flags]
+  sensu-go-pushover-handler [flags]
 
 Flags:
   -C, --criticalPriority int8    The priority for Critical status messages (default 1)
-  -h, --help                     help for sensu-pushover-handler
+  -h, --help                     help for sensu-go-pushover-handler
   -b, --messageBody string       The message body, in token substitution format (default "{{.Check.Output}}")
   -m, --messageTitle string      The message title, in token substitution format (default "{{.Entity.Name}}/{{.Check.Name}}")
   -O, --okPriority int8          The priority for OK status messages (default 0)
