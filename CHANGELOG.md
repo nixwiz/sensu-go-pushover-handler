@@ -7,6 +7,13 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Changed
+- Rewrote to use confighandler
+- Updated to use modules
+- Compiled with go1.12.9
+- Minor documentation changes
+- Remove v from version numbers for goreleaser
+
 ## [0.3.3] - 06/10/2019
 
 ### Changed
