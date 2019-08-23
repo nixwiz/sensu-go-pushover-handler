@@ -2,139 +2,146 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
-	"os"
-	"path"
 	"text/template"
 
-	"github.com/sensu/sensu-go/types"
-	"github.com/spf13/cobra"
+	corev2 "github.com/sensu/sensu-go/api/core/v2"
+	"github.com/sensu/sensu-plugins-go-library/sensu"
 )
 
-const pushoverAPIURL string = "https://api.pushover.net/1/messages"
+const (
+	pushoverToken    = "pushoverToken"
+	pushoverUserKey  = "pushoverUserKey"
+	messageBody      = "messageBody"
+	messageTitle     = "messageTitle"
+	okPriority       = "okPriority"
+	warningPriority  = "warningPriority"
+	criticalPriority = "criticalPriority"
+	unknownPriority  = "unknownPriority"
 
-type HandlerConfigOption struct {
-	Value string
-	Path  string
-	Env   string
-}
+	pushoverAPIURL string = "https://api.pushover.net/1/messages"
+)
 
 type HandlerConfig struct {
-	PushoverToken        HandlerConfigOption
-	PushoverUserKey      HandlerConfigOption
-	MessageBodyTemplate  HandlerConfigOption
-	MessageTitleTemplate HandlerConfigOption
-	Keyspace             string
+	sensu.PluginConfig
+	PushoverToken        string
+	PushoverUserKey      string
+	MessageBodyTemplate  string
+	MessageTitleTemplate string
+	OkPriority           uint64
+	WarningPriority      uint64
+	CriticalPriority     uint64
+	UnknownPriority      uint64
 }
 
 var (
-	okPriority       int8
-	warningPriority  int8
-	criticalPriority int8
-	unknownPriority  int8
-	stdin            *os.File
-
 	config = HandlerConfig{
-		PushoverToken:        HandlerConfigOption{Path: "token", Env: "SENSU_PUSHOVER_TOKEN"},
-		PushoverUserKey:      HandlerConfigOption{Path: "user-key", Env: "SENSU_PUSHOVER_USERKEY"},
-		MessageBodyTemplate:  HandlerConfigOption{Value: "{{.Check.Output}}", Path: "body-template"},
-		MessageTitleTemplate: HandlerConfigOption{Value: "{{.Entity.Name}}/{{.Check.Name}}", Path: "title-template"},
-		Keyspace:             "sensu.io/plugins/pushover/config",
+		PluginConfig: sensu.PluginConfig{
+			Name:     "sensu-go-pushover-handler",
+			Short:    "The Sensu Go Pushover handler for sending notifications",
+			Keyspace: "sensu.io/plugins/pushover/config",
+		},
 	}
-	options = []*HandlerConfigOption{
-		&config.PushoverToken,
-		&config.PushoverUserKey,
-		&config.MessageBodyTemplate,
-		&config.MessageTitleTemplate,
+
+	pushoverConfigOptions = []*sensu.PluginConfigOption{
+		{
+			Path:      pushoverToken,
+			Env:       "SENSU_PUSHOVER_TOKEN",
+			Argument:  pushoverToken,
+			Shorthand: "t",
+			Default:   "",
+			Usage:     "The Pushover API token",
+			Value:     &config.PushoverToken,
+		},
+		{
+			Path:      pushoverUserKey,
+			Env:       "SENSU_PUSHOVER_USERKEY",
+			Argument:  pushoverUserKey,
+			Shorthand: "u",
+			Default:   "",
+			Usage:     "The Pushover API token",
+			Value:     &config.PushoverUserKey,
+		},
+		{
+			Path:      messageTitle,
+			Argument:  messageTitle,
+			Shorthand: "m",
+			Default:   "{{.Entity.Name}}/{{.Check.Name}}",
+			Usage:     "The message title, in token substitution format",
+			Value:     &config.MessageTitleTemplate,
+		},
+		{
+			Path:      messageBody,
+			Argument:  messageBody,
+			Shorthand: "b",
+			Default:   "{{.Check.Output}}",
+			Usage:     "The message body, in token substitution format",
+			Value:     &config.MessageBodyTemplate,
+		},
+		{
+			Path:      okPriority,
+			Argument:  okPriority,
+			Shorthand: "O",
+			Default:   uint64(0),
+			Usage:     "The priority for OK status messages (default 0)",
+			Value:     &config.OkPriority,
+		},
+		{
+			Path:      warningPriority,
+			Argument:  warningPriority,
+			Shorthand: "W",
+			Default:   uint64(0),
+			Usage:     "The priority for Warning status messages (default 0)",
+			Value:     &config.WarningPriority,
+		},
+		{
+			Path:      criticalPriority,
+			Argument:  criticalPriority,
+			Shorthand: "C",
+			Default:   uint64(1),
+			Usage:     "The priority for Critical status messages",
+			Value:     &config.CriticalPriority,
+		},
+		{
+			Path:      unknownPriority,
+			Argument:  unknownPriority,
+			Shorthand: "U",
+			Default:   uint64(1),
+			Usage:     "The priority for Unknown status messages",
+			Value:     &config.UnknownPriority,
+		},
 	}
 )
 
 func main() {
 
-	cmd := &cobra.Command{
-		Use:   "sensu-go-pushover-handler",
-		Short: "The Sensu Pushover handler for sending notifications",
-		RunE:  run,
-	}
-
-	cmd.Flags().StringVarP(&config.PushoverToken.Value, "pushoverToken", "t", os.Getenv("SENSU_PUSHOVER_TOKEN"), "The Pushover API token, if not in env SENSU_PUSHOVER_TOKEN")
-	cmd.Flags().StringVarP(&config.PushoverUserKey.Value, "pushoverUserKey", "u", os.Getenv("SENSU_PUSHOVER_USERKEY"), "The Pushover User Key, if not in env SENSU_PUSHOVER_USERKEY")
-	cmd.Flags().StringVarP(&config.MessageTitleTemplate.Value, "messageTitle", "m", config.MessageTitleTemplate.Value, "The message title, in token substitution format")
-	cmd.Flags().StringVarP(&config.MessageBodyTemplate.Value, "messageBody", "b", config.MessageBodyTemplate.Value, "The message body, in token substitution format")
-	cmd.Flags().Int8VarP(&okPriority, "okPriority", "O", 0, "The priority for OK status messages (default 0)")
-	cmd.Flags().Int8VarP(&warningPriority, "warningPriority", "W", 0, "The priority for Warning status messages (default 0)")
-	cmd.Flags().Int8VarP(&criticalPriority, "criticalPriority", "C", 1, "The priority for Critical status messages")
-	cmd.Flags().Int8VarP(&unknownPriority, "unknownPriority", "U", 1, "The priority for Unknown status messages")
-	cmd.Execute()
+	goHandler := sensu.NewGoHandler(&config.PluginConfig, pushoverConfigOptions, checkArgs, sendPushover)
+	goHandler.Execute()
 
 }
 
-func run(cmd *cobra.Command, args []string) error {
+func checkArgs(_ *corev2.Event) error {
 
-	if stdin == nil {
-		stdin = os.Stdin
-	}
-
-	eventJSON, err := ioutil.ReadAll(stdin)
-	if err != nil {
-		return fmt.Errorf("failed to read stdin: %s", err)
-	}
-
-	event := &types.Event{}
-	err = json.Unmarshal(eventJSON, event)
-	if err != nil {
-		return fmt.Errorf("failed to unmarshal stdin data: %s", err)
-	}
-
-	if err = event.Validate(); err != nil {
-		return fmt.Errorf("failed to validate event: %s", err)
-	}
-
-	if !event.HasCheck() {
-		return fmt.Errorf("event does not contain check")
-	}
-
-	configurationOverrides(&config, options, event)
-
-	validationError := checkArgs()
-	if validationError != nil {
-		return validationError
-	}
-
-	pushoverError := sendPushover(event)
-	if pushoverError != nil {
-		return fmt.Errorf("failed to send to Pushover: %s", pushoverError)
-	}
-
-	return nil
-
-}
-
-func checkArgs() error {
-
-	if len(config.PushoverToken.Value) == 0 {
+	if len(config.PushoverToken) == 0 {
 		return errors.New("missing Pushover token")
 	}
-	if len(config.PushoverUserKey.Value) == 0 {
+	if len(config.PushoverUserKey) == 0 {
 		return errors.New("missing Pushover user key")
 	}
-	if len(config.MessageTitleTemplate.Value) == 0 {
+	if len(config.MessageTitleTemplate) == 0 {
 		return errors.New("missing message title template")
 	}
-	if len(config.MessageBodyTemplate.Value) == 0 {
+	if len(config.MessageBodyTemplate) == 0 {
 		return errors.New("missing message body template")
 	}
 
 	return nil
 }
 
-func sendPushover(event *types.Event) error {
+func sendPushover(event *corev2.Event) error {
 
 	var (
 		priority string
@@ -142,28 +149,28 @@ func sendPushover(event *types.Event) error {
 
 	switch event.Check.Status {
 	case 0:
-		priority = fmt.Sprint(okPriority)
+		priority = fmt.Sprint(config.OkPriority)
 	case 1:
-		priority = fmt.Sprint(warningPriority)
+		priority = fmt.Sprint(config.WarningPriority)
 	case 2:
-		priority = fmt.Sprint(criticalPriority)
+		priority = fmt.Sprint(config.CriticalPriority)
 	default:
-		priority = fmt.Sprint(unknownPriority)
+		priority = fmt.Sprint(config.UnknownPriority)
 	}
 
-	messageTitle, titleErr := resolveTemplate(config.MessageTitleTemplate.Value, event)
+	messageTitle, titleErr := resolveTemplate(config.MessageTitleTemplate, event)
 	if titleErr != nil {
 		return titleErr
 	}
 
-	messageBody, bodyErr := resolveTemplate(config.MessageBodyTemplate.Value, event)
+	messageBody, bodyErr := resolveTemplate(config.MessageBodyTemplate, event)
 	if bodyErr != nil {
 		return bodyErr
 	}
 
 	pushoverForm := url.Values{}
-	pushoverForm.Add("token", config.PushoverToken.Value)
-	pushoverForm.Add("user", config.PushoverUserKey.Value)
+	pushoverForm.Add("token", config.PushoverToken)
+	pushoverForm.Add("user", config.PushoverUserKey)
 	pushoverForm.Add("priority", priority)
 	pushoverForm.Add("title", messageTitle)
 	pushoverForm.Add("message", messageBody)
@@ -180,7 +187,7 @@ func sendPushover(event *types.Event) error {
 	return nil
 }
 
-func resolveTemplate(templateValue string, event *types.Event) (string, error) {
+func resolveTemplate(templateValue string, event *corev2.Event) (string, error) {
 	var resolved bytes.Buffer
 	tmpl, err := template.New("test").Parse(templateValue)
 	if err != nil {
@@ -192,24 +199,4 @@ func resolveTemplate(templateValue string, event *types.Event) (string, error) {
 	}
 
 	return resolved.String(), nil
-}
-
-func configurationOverrides(config *HandlerConfig, options []*HandlerConfigOption, event *types.Event) {
-	if config.Keyspace == "" {
-		return
-	}
-	for _, opt := range options {
-		if opt.Path != "" {
-			// compile the Annotation keyspace to look for configuration overrides
-			k := path.Join(config.Keyspace, opt.Path)
-			switch {
-			case event.Check.Annotations[k] != "":
-				opt.Value = event.Check.Annotations[k]
-				log.Printf("Overriding default handler configuration with value of \"Check.Annotations.%s\" (\"%s\")\n", k, event.Check.Annotations[k])
-			case event.Entity.Annotations[k] != "":
-				opt.Value = event.Entity.Annotations[k]
-				log.Printf("Overriding default handler configuration with value of \"Entity.Annotations.%s\" (\"%s\")\n", k, event.Entity.Annotations[k])
-			}
-		}
-	}
 }
