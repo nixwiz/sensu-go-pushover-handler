@@ -7,6 +7,8 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [0.4.0] - 08/22/2019
+
 ### Changed
 - Rewrote to use confighandler
 - Updated to use modules
