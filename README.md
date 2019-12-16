@@ -1,4 +1,6 @@
 # sensu-go-pushover-handler
+TravisCI: [![TravisCI Build Status](https://travis-ci.org/nixwiz/sensu-go-pushover-handler.svg?branch=master)](https://travis-ci.org/nixwiz/sensu-go-pushover-handler)
+
 The Senso Go Pushover Handler is a [Sensu Event Handler][1] for sending incident
 notifications to Pushover.
 
