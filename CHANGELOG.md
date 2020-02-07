@@ -9,6 +9,7 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### Changed
 - Fixed goreleaser deprecated archive to use archives
+- Updated golangci-lint to v1.20.0
 
 ## [0.4.1] - 2019-12-17
 ### Changed
