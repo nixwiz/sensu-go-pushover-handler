@@ -7,12 +7,15 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [0.5.0] - 2020-02-10
+
 ### Changed
 - Fixed goreleaser deprecated archive to use archives
 - Replaced Travis CI with GitHub Actions
 - Use new Sensu SDK module
 
 ## [0.4.1] - 2019-12-17
+
 ### Changed
 - Reformatted README for [Plugin Style Guide](https://github.com/sensu-plugins/community/blob/master/PLUGIN_STYLEGUIDE.md)
 
