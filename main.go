@@ -8,8 +8,8 @@ import (
 	"net/url"
 	"text/template"
 
+	"github.com/sensu-community/sensu-plugin-sdk/sensu"
 	corev2 "github.com/sensu/sensu-go/api/core/v2"
-	"github.com/sensu/sensu-plugins-go-library/sensu"
 )
 
 const (
