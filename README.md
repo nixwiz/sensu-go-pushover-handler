@@ -1,4 +1,5 @@
 [![Sensu Bonsai Asset](https://img.shields.io/badge/Bonsai-Download%20Me-brightgreen.svg?colorB=89C967&logo=sensu)](https://bonsai.sensu.io/assets/nixwiz/sensu-go-pushover-handler)
+![Go Test](https://github.com/nixwiz/sensu-go-pushover-handler/workflows/Go%20Test/badge.svg)
 ![goreleaser](https://github.com/nixwiz/sensu-go-pushover-handler/workflows/goreleaser/badge.svg)
 
 ## Sensu Go Pushover Handler
