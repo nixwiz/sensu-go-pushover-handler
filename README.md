@@ -42,6 +42,7 @@ Flags:
   -h, --help                     help for sensu-go-pushover-handler
   -b, --messageBody string       The message body, in token substitution format (default "{{.Check.Output}}")
   -m, --messageTitle string      The message title, in token substitution format (default "{{.Entity.Name}}/{{.Check.Name}}")
+  -a, --pushoverAPIURL string    The Pushover API URL (default "https://api.pushover.net/1/messages")
   -O, --okPriority uint          The priority for OK status messages (default 0)
   -t, --pushoverToken string     The Pushover API token
   -u, --pushoverUserKey string   The Pushover API token
