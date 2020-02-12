@@ -21,8 +21,7 @@ const (
 	warningPriority  = "warningPriority"
 	criticalPriority = "criticalPriority"
 	unknownPriority  = "unknownPriority"
-
-	pushoverAPIURL string = "https://api.pushover.net/1/messages"
+	pushoverAPIURL   = "pushoverAPIURL"
 )
 
 type HandlerConfig struct {
@@ -35,6 +34,7 @@ type HandlerConfig struct {
 	WarningPriority      uint64
 	CriticalPriority     uint64
 	UnknownPriority      uint64
+	PushoverAPIURL       string
 }
 
 var (
@@ -113,6 +113,14 @@ var (
 			Usage:     "The priority for Unknown status messages",
 			Value:     &config.UnknownPriority,
 		},
+		{
+			Path:      pushoverAPIURL,
+			Argument:  pushoverAPIURL,
+			Shorthand: "a",
+			Default:   "https://api.pushover.net/1/messages",
+			Usage:     "The Pushover API URL",
+			Value:     &config.PushoverAPIURL,
+		},
 	}
 )
 
@@ -175,13 +183,13 @@ func sendPushover(event *corev2.Event) error {
 	pushoverForm.Add("title", messageTitle)
 	pushoverForm.Add("message", messageBody)
 
-	resp, err := http.PostForm(pushoverAPIURL, pushoverForm)
+	resp, err := http.PostForm(config.PushoverAPIURL, pushoverForm)
 	if err != nil {
-		return fmt.Errorf("Post to %s failed: %s", pushoverAPIURL, err)
+		return fmt.Errorf("Post to %s failed: %s", config.PushoverAPIURL, err)
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return fmt.Errorf("POST to %s failed with %v", pushoverAPIURL, resp.Status)
+		return fmt.Errorf("POST to %s failed with %v", config.PushoverAPIURL, resp.Status)
 	}
 
 	return nil

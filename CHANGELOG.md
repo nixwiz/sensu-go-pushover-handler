@@ -7,6 +7,12 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Changed
+- Made pushoverAPIURL a configurable variable to facilitate testing
+
+### Added
+- Tests, including GitHub Actions
+
 ## [0.5.0] - 2020-02-10
 
 ### Changed
