@@ -9,6 +9,7 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### Changed
 - Updated README to include new argument for setting API URL
+- Minor cleanup
 
 ## [0.5.1] - 2020-02-12
 

@@ -1,7 +1,6 @@
 package main
 
 import (
-	// "compress/gzip"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
