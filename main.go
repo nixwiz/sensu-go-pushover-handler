@@ -24,6 +24,7 @@ const (
 	pushoverAPIURL   = "pushoverAPIURL"
 )
 
+// HandlerConfig is needed for Sensu Go Handlers
 type HandlerConfig struct {
 	sensu.PluginConfig
 	PushoverToken        string
