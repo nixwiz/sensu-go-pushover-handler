@@ -30,10 +30,6 @@ func TestCheckArgs(t *testing.T) {
 	assert.NoError(CheckArgs(event))
 }
 
-// Fix this to run repeatable with Status of:
-// 1(yellow,warning)
-// 2(red,critical)
-// 127 (orange,unknown)
 func TestSendPushover(t *testing.T) {
 	testcases := []struct {
 		status   uint32
@@ -55,7 +51,6 @@ func TestSendPushover(t *testing.T) {
 		var test = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			body, err := ioutil.ReadAll(r.Body)
 			assert.NoError(err)
-			// expectedBody := "message=OK&priority=0&title=entity1%2Fcheck1&token=123&user=abc"
 			expectedBody := fmt.Sprintf("message=%s&priority=%v&title=entity1%%2Fcheck1&token=123&user=abc", tc.state, tc.priority)
 			assert.Equal(expectedBody, strings.Trim(string(body), "\n"))
 			w.WriteHeader(http.StatusOK)
