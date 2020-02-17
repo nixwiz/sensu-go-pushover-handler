@@ -127,12 +127,12 @@ var (
 
 func main() {
 
-	goHandler := sensu.NewGoHandler(&config.PluginConfig, pushoverConfigOptions, checkArgs, sendPushover)
+	goHandler := sensu.NewGoHandler(&config.PluginConfig, pushoverConfigOptions, CheckArgs, SendPushover)
 	goHandler.Execute()
 
 }
 
-func checkArgs(_ *corev2.Event) error {
+func CheckArgs(_ *corev2.Event) error {
 
 	if len(config.PushoverToken) == 0 {
 		return errors.New("missing Pushover token")
@@ -150,7 +150,7 @@ func checkArgs(_ *corev2.Event) error {
 	return nil
 }
 
-func sendPushover(event *corev2.Event) error {
+func SendPushover(event *corev2.Event) error {
 
 	var (
 		priority string
