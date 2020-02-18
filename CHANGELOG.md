@@ -7,6 +7,9 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Changed
+- Change resolveTemplate to return error instead of panic
+
 ## [0.6.0] - 2020-02-18
 
 ### Added
