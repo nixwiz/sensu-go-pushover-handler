@@ -51,7 +51,7 @@ func TestSendPushover(t *testing.T) {
 		var test = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			body, err := ioutil.ReadAll(r.Body)
 			assert.NoError(err)
-			expectedBody := fmt.Sprintf("message=%s&priority=%v&title=entity1%%2Fcheck1&token=123&user=abc", tc.state, tc.priority)
+			expectedBody := fmt.Sprintf("message=%s&priority=%v&sound=pushover&title=entity1%%2Fcheck1&token=123&user=abc", tc.state, tc.priority)
 			assert.Equal(expectedBody, strings.Trim(string(body), "\n"))
 			w.WriteHeader(http.StatusOK)
 		}))
@@ -61,6 +61,7 @@ func TestSendPushover(t *testing.T) {
 		config.PushoverAPIURL = test.URL
 		config.MessageTitleTemplate = "{{.Entity.Name}}/{{.Check.Name}}"
 		config.MessageBodyTemplate = "{{.Check.Output}}"
+		config.MessageSound = "pushover"
 		config.OkPriority = 0
 		config.WarningPriority = 0
 		config.CriticalPriority = 1

@@ -41,6 +41,7 @@ Flags:
   -b, --messageBody string       The message body, in token substitution format (default "{{.Check.Output}}")
   -m, --messageTitle string      The message title, in token substitution format (default "{{.Entity.Name}}/{{.Check.Name}}")
   -a, --pushoverAPIURL string    The Pushover API URL (default "https://api.pushover.net/1/messages")
+  -s, --messageSound string      The sound for the message (default "pushover")
   -O, --okPriority uint          The priority for OK status messages (default 0)
   -t, --pushoverToken string     The Pushover API token
   -u, --pushoverUserKey string   The Pushover API user key
