@@ -11,7 +11,6 @@
 - [Configuration](#configuration)
   - [Sensu Go](#sensu-go)
     - [Asset registration](#asset-registration)
-    - [Asset definition](#asset-definition)
     - [Handler definition](#handler-definition)
   - [Sensu Core](#sensu-core)
 - [Installation from source](#installation-from-source)
@@ -20,9 +19,7 @@
 
 ### Overview
 
-The Senso Go Pushover Handler is a [Sensu Event Handler][1] for sending incident notifications to Pushover.
-
-This handler reuses concepts found in the [sensu-email-handler][5].
+The Senso Go Pushover Handler is a [Sensu Event Handler][1] for sending incident notifications to [Pushover][5].
 
 ### Files
 
@@ -46,7 +43,7 @@ Flags:
   -a, --pushoverAPIURL string    The Pushover API URL (default "https://api.pushover.net/1/messages")
   -O, --okPriority uint          The priority for OK status messages (default 0)
   -t, --pushoverToken string     The Pushover API token
-  -u, --pushoverUserKey string   The Pushover API token
+  -u, --pushoverUserKey string   The Pushover API user key
   -U, --unknownPriority uint     The priority for Unknown status messages (default 1)
   -W, --warningPriority uint     The priority for Warning status messages (default 0)
 ```
@@ -61,53 +58,43 @@ Assets are the best way to make use of this plugin. If you're not using an asset
 
 If you're using an earlier version of sensuctl, you can download the asset definition from [this project's Bonsai asset index page][7] or one of the existing [releases][3] or create an executable script from this source.
 
-From the local path of the sensu-go-pushover-handler repository:
+To build from source, from the local path of the sensu-go-pushover-handler repository:
 ```
 go build -o /usr/local/bin/sensu-go-pushover-handler main.go
 ```
 
-#### Asset definition
-
-```yaml
----
-type: Asset
-api_version: core/v2
-metadata:
-  name: sensu-go-pushover-handler
-spec:
-  url: https://assets.bonsai.sensu.io/68a80a140568696316455c2c6e43dfe4af472c67/sensu-go-pushover-handler_0.4.0_linux_amd64.tar.gz
-  sha512: 7abb3c07d58d13607065250ca601056c54842764f199f7fbc55c2541fa5ffd9996c795063b81eef06de11d3067dbbafd9af5dbd937f257c6e55c2d5462c24f45
-```
-
 #### Handler definition
 
-```json
-{
-    "api_version": "core/v2",
-    "type": "Handler",
-    "metadata": {
-        "namespace": "default",
-        "name": "pushover"
-    },
-    "spec": {
-        "type": "pipe",
-        "command": "sensu-go-pushover-handler",
-        "timeout": 10,
-        "env_vars": [
-            "SENSU_PUSHOVER_TOKEN=a0b1c2d3e4f5g6h7i8j9k0l1m2n3o4",
-            "SENSU_PUSHOVER_USERKEY=a0b1c2d3e4f5g6h7i8j9k0l1m"
-        ],
-        "filters": [
-            "is_incident",
-            "not_silenced"
-        ],
-        "runtime_assets": [
-            "sensu-go-pushover-handler"
-        ]
-    }
-}
-
+```yaml
+api_version: core/v2
+type: Handler
+metadata:
+  namespace: default
+  name: pushover
+spec:
+  type: pipe
+  command: sensu-go-pushover-handler -b http://sensu-backend.example.com:3000
+  filters:
+  - is_incident
+  - not_silenced
+  runtime_assets:
+  - nixwiz/sensu-go-pushover-handler
+  secrets:
+  - name: SENSU_PUSHOVER_TOKEN
+    secret: pushover#token
+  - name: SENSU_PUSHOVER_USERKEY
+    secret: pushover#userkey
+  timeout: 10
 ```
+
+**Security Note**: The Pushover Token and UserKey should always be treated as
+security sensitive configuration options and in this example, they are loaded
+into the handler configuration as environment variables using [secrets][10].
+Command arguments are commonly readable from the process table by other
+unpriviledged users on a system (ex: ps and top commands), so it's a better
+practice to read in sensitive information via environment variables or
+configuration files on disk. The --pushoverToken and --pushoverUserKey flags
+are provided as an override for testing purposes.
 
 ### Sensu Core
 
@@ -160,3 +147,4 @@ N/A
 [7]: https://bonsai.sensu.io/assets/nixwiz/sensu-go-pushover-handler
 [8]: https://docs.sensu.io/sensu-core/latest/installation/installing-plugins/
 [9]: #asset-registration
+[10]: https://docs.sensu.io/sensu-go/latest/reference/secrets/

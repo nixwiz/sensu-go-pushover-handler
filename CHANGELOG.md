@@ -13,6 +13,7 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 - Minor cleanup for golint
 - Added goreportcard.com
 - Improved test coverage
+- README changes for secrets and a few other README fixes
 
 ## [0.5.1] - 2020-02-12
 
