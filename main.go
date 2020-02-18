@@ -212,11 +212,11 @@ func resolveTemplate(templateValue string, event *corev2.Event) (string, error) 
 	var resolved bytes.Buffer
 	tmpl, err := template.New("test").Parse(templateValue)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	err = tmpl.Execute(&resolved, *event)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	return resolved.String(), nil
