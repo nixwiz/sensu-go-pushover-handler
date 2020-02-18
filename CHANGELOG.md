@@ -7,6 +7,8 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [0.6.0] - 2020-02-18
+
 ### Added
 - Added configurable message sound
 
