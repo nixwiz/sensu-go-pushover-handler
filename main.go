@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 	"text/template"
 
 	"github.com/sensu-community/sensu-plugin-sdk/sensu"
@@ -17,6 +18,7 @@ const (
 	pushoverUserKey  = "pushoverUserKey"
 	messageBody      = "messageBody"
 	messageTitle     = "messageTitle"
+	messageSound     = "messageSound"
 	okPriority       = "okPriority"
 	warningPriority  = "warningPriority"
 	criticalPriority = "criticalPriority"
@@ -31,6 +33,7 @@ type HandlerConfig struct {
 	PushoverUserKey      string
 	MessageBodyTemplate  string
 	MessageTitleTemplate string
+	MessageSound         string
 	OkPriority           uint64
 	WarningPriority      uint64
 	CriticalPriority     uint64
@@ -73,6 +76,14 @@ var (
 			Default:   "{{.Entity.Name}}/{{.Check.Name}}",
 			Usage:     "The message title, in token substitution format",
 			Value:     &config.MessageTitleTemplate,
+		},
+		{
+			Path:      messageSound,
+			Argument:  messageSound,
+			Shorthand: "s",
+			Default:   "pushover",
+			Usage:     "The sound for the message",
+			Value:     &config.MessageSound,
 		},
 		{
 			Path:      messageBody,
@@ -181,6 +192,7 @@ func SendPushover(event *corev2.Event) error {
 	pushoverForm.Add("token", config.PushoverToken)
 	pushoverForm.Add("user", config.PushoverUserKey)
 	pushoverForm.Add("priority", priority)
+	pushoverForm.Add("sound", strings.ToLower(config.MessageSound))
 	pushoverForm.Add("title", messageTitle)
 	pushoverForm.Add("message", messageBody)
 

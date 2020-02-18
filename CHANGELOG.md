@@ -7,6 +7,9 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Added
+- Added configurable message sound
+
 ### Changed
 - Updated README to include new argument for setting API URL
 - Minor cleanup
