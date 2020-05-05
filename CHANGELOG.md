@@ -7,6 +7,11 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [0.6.4] - 2020-05-05
+
+### Changed
+- Removed unneeded bonsai entries
+
 ## [0.6.3] - 2020-05-05
 
 ### Changed
