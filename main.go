@@ -1,15 +1,14 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
-	"text/template"
 
 	"github.com/sensu-community/sensu-plugin-sdk/sensu"
+	"github.com/sensu-community/sensu-plugin-sdk/templates"
 	corev2 "github.com/sensu/sensu-go/api/core/v2"
 )
 
@@ -178,12 +177,12 @@ func SendPushover(event *corev2.Event) error {
 		priority = fmt.Sprint(config.UnknownPriority)
 	}
 
-	messageTitle, titleErr := resolveTemplate(config.MessageTitleTemplate, event)
+	messageTitle, titleErr := templates.EvalTemplate("messageTitle", config.MessageTitleTemplate, event)
 	if titleErr != nil {
 		return titleErr
 	}
 
-	messageBody, bodyErr := resolveTemplate(config.MessageBodyTemplate, event)
+	messageBody, bodyErr := templates.EvalTemplate("messageBody", config.MessageBodyTemplate, event)
 	if bodyErr != nil {
 		return bodyErr
 	}
@@ -208,16 +207,3 @@ func SendPushover(event *corev2.Event) error {
 	return nil
 }
 
-func resolveTemplate(templateValue string, event *corev2.Event) (string, error) {
-	var resolved bytes.Buffer
-	tmpl, err := template.New("test").Parse(templateValue)
-	if err != nil {
-		return "", err
-	}
-	err = tmpl.Execute(&resolved, *event)
-	if err != nil {
-		return "", err
-	}
-
-	return resolved.String(), nil
-}
