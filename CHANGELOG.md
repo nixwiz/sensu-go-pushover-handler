@@ -7,7 +7,7 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
-## [0.6.2] - 2020-05-05
+## [0.6.3] - 2020-05-05
 
 ### Changed
 - Changed goreleaser targets
