@@ -7,6 +7,8 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [0.7.0] - 2020-06-02
+
 ### Added
 - Retry and Expire flags to allow sending emergency (Pri 2) alerts
 
