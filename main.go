@@ -22,6 +22,8 @@ const (
 	warningPriority  = "warningPriority"
 	criticalPriority = "criticalPriority"
 	unknownPriority  = "unknownPriority"
+	emergencyRetry   = "emergencyRetry"
+	emergencyExpire  = "emergencyExpire"
 	pushoverAPIURL   = "pushoverAPIURL"
 )
 
@@ -37,6 +39,8 @@ type HandlerConfig struct {
 	WarningPriority      uint64
 	CriticalPriority     uint64
 	UnknownPriority      uint64
+	EmergencyRetry       uint64
+	EmergencyExpire      uint64
 	PushoverAPIURL       string
 }
 
@@ -125,6 +129,22 @@ var (
 			Value:     &config.UnknownPriority,
 		},
 		{
+			Path:      emergencyRetry,
+			Argument:  emergencyRetry,
+			Shorthand: "R",
+			Default:   uint64(60),
+			Usage:     "How often, in seconds, to send the same notification to the user, only relevant to Priority 2 messages",
+			Value:     &config.EmergencyRetry,
+		},
+		{
+			Path:      emergencyExpire,
+			Argument:  emergencyExpire,
+			Shorthand: "E",
+			Default:   uint64(3600),
+			Usage:     "How long, in seconds, to continue sending the same notification to the user, only relevant to Priority 2 messages",
+			Value:     &config.EmergencyExpire,
+		},
+		{
 			Path:      pushoverAPIURL,
 			Argument:  pushoverAPIURL,
 			Shorthand: "a",
@@ -155,6 +175,9 @@ func CheckArgs(_ *corev2.Event) error {
 	}
 	if len(config.MessageBodyTemplate) == 0 {
 		return errors.New("missing message body template")
+	}
+	if config.EmergencyExpire > 10800 {
+		return errors.New("expire argument too large, > 10800")
 	}
 
 	return nil
@@ -194,6 +217,8 @@ func SendPushover(event *corev2.Event) error {
 	pushoverForm.Add("sound", strings.ToLower(config.MessageSound))
 	pushoverForm.Add("title", messageTitle)
 	pushoverForm.Add("message", messageBody)
+	pushoverForm.Add("retry", fmt.Sprintf("%d", config.EmergencyRetry))
+	pushoverForm.Add("expire", fmt.Sprintf("%d", config.EmergencyExpire))
 
 	resp, err := http.PostForm(config.PushoverAPIURL, pushoverForm)
 	if err != nil {
@@ -206,4 +231,3 @@ func SendPushover(event *corev2.Event) error {
 
 	return nil
 }
-
