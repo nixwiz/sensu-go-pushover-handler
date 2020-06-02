@@ -6,7 +6,6 @@
 ## Sensu Go Pushover Handler
 
 - [Overview](#overview)
-- [Files](#files)
 - [Usage examples](#usage-examples)
 - [Configuration](#configuration)
   - [Sensu Go](#sensu-go)
@@ -20,10 +19,6 @@
 ### Overview
 
 The Senso Go Pushover Handler is a [Sensu Event Handler][1] for sending incident notifications to [Pushover][5].
-
-### Files
-
-N/A
 
 ## Usage examples
 
@@ -47,6 +42,9 @@ Flags:
   -u, --pushoverUserKey string   The Pushover API user key
   -U, --unknownPriority uint     The priority for Unknown status messages (default 1)
   -W, --warningPriority uint     The priority for Warning status messages (default 0)
+  -E, --emergencyExpire uint     How long, in seconds, to continue sending the same notification to the user, only relevant to Priority 2 messages (default 3600)
+  -R, --emergencyRetry uint      How often, in seconds, to send the same notification to the user, only relevant to Priority 2 messages (default 60)
+
 ```
 
 ## Configuration
