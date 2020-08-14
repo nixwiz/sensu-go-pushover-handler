@@ -3,9 +3,15 @@ module github.com/nixwiz/sensu-go-pushover-handler
 go 1.12
 
 require (
-	github.com/robertkrimen/otto v0.0.0-20191219234010-c382bd3c16ff // indirect
-	github.com/robfig/cron v0.0.0-20171101201047-2315d5715e36 // indirect
-	github.com/sensu-community/sensu-plugin-sdk v0.6.0
-	github.com/sensu/sensu-go v5.10.1+incompatible
-	github.com/stretchr/testify v1.4.0
+	github.com/pelletier/go-toml v1.6.0 // indirect
+	github.com/sensu-community/sensu-plugin-sdk v0.8.0
+	github.com/sensu/sensu-go/api/core/v2 v2.2.3
+	github.com/spf13/afero v1.2.2 // indirect
+	github.com/spf13/cast v1.3.1 // indirect
+	github.com/spf13/jwalterweatherman v1.1.0 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/stretchr/testify v1.6.0
+	golang.org/x/net v0.0.0-20200114155413-6afb5195e5aa // indirect
+	golang.org/x/sys v0.0.0-20200120151820-655fe14d7479 // indirect
+	gopkg.in/ini.v1 v1.51.1 // indirect
 )
