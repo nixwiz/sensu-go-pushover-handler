@@ -7,6 +7,10 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Changed
+- Updated SDK to 0.8.0
+- Set secret bool to true for token and auth
+
 ## [0.7.0] - 2020-06-02
 
 ### Added
