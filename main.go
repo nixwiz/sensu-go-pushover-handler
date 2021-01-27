@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -44,6 +46,13 @@ type HandlerConfig struct {
 	PushoverAPIURL       string
 }
 
+type PushoverResponse struct {
+	Status  int      `json:"status"`
+	Request string   `json:"request"`
+	Errors  []string `json:"errors,omitempty"`
+	Receipt string   `json:"receipt,omitempty"`
+}
+
 var (
 	config = HandlerConfig{
 		PluginConfig: sensu.PluginConfig{
@@ -79,7 +88,7 @@ var (
 			Argument:  messageTitle,
 			Shorthand: "m",
 			Default:   "{{.Entity.Name}}/{{.Check.Name}}",
-			Usage:     "The message title, in token substitution format",
+			Usage:     "The message title template",
 			Value:     &config.MessageTitleTemplate,
 		},
 		{
@@ -95,7 +104,7 @@ var (
 			Argument:  messageBody,
 			Shorthand: "b",
 			Default:   "{{.Check.Output}}",
-			Usage:     "The message body, in token substitution format",
+			Usage:     "The message body template",
 			Value:     &config.MessageBodyTemplate,
 		},
 		{
@@ -230,6 +239,22 @@ func SendPushover(event *corev2.Event) error {
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		return fmt.Errorf("POST to %s failed with %v", config.PushoverAPIURL, resp.Status)
 	}
+
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("Failed to read response body from %s: %v", config.PushoverAPIURL, err)
+	}
+
+	pushoverResponse := PushoverResponse{}
+	err = json.Unmarshal(body, &pushoverResponse)
+	if err != nil {
+		return fmt.Errorf("Failed to unmarshal resonse from Pushover: %v", err)
+	}
+
+	// FUTURE: send to AH
+	fmt.Printf("Submitted request ID %s to Pushover\n", pushoverResponse.Request)
 
 	return nil
 }

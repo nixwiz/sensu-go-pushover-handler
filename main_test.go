@@ -74,7 +74,7 @@ func TestSendPushover(t *testing.T) {
 	}
 }
 
-func Testmain(t *testing.T) {
+func TestMain(t *testing.T) {
 	assert := assert.New(t)
 	file, _ := ioutil.TempFile(os.TempDir(), "sensu-go-pushover-handler")
 	defer func() {
