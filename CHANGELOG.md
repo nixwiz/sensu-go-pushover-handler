@@ -8,8 +8,12 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 ## Unreleased
 
 ### Changed
-- Updated SDK to 0.10.1
-- Updated module dependencies
+- Updated SDK and other modules
+- Reorganized and updated README
+
+### Added
+- Added lint GitHubAction
+- Output of Pushover request ID
 
 ## [0.8.0] - 2020-08-14
 
