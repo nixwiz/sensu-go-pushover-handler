@@ -54,6 +54,13 @@ func TestSendPushover(t *testing.T) {
 			expectedBody := fmt.Sprintf("expire=3600&message=%s&priority=%v&retry=60&sound=pushover&title=entity1%%2Fcheck1&token=123&user=abc", tc.state, tc.priority)
 			assert.Equal(expectedBody, strings.Trim(string(body), "\n"))
 			w.WriteHeader(http.StatusOK)
+			response := PushoverResponse{
+				Status:  1,
+				Request: "8d4ab099-eac7-475f-ac60-640332ae0aa1",
+			}
+			responseBytes, _ := json.Marshal(response)
+			_, err = w.Write(responseBytes)
+			require.NoError(t, err)
 		}))
 
 		_, err := url.ParseRequestURI(test.URL)
