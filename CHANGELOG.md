@@ -7,6 +7,10 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Changed
+- Updated GitHub Actions to use Go 1.14
+- Updated dependencies and fixed path to sensu-plugin-sdk
+
 ## [0.9.0] - 2021-01-27
 
 ### Changed
