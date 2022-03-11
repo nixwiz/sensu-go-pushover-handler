@@ -7,6 +7,8 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [1.1.0] - 2022-03-11
+
 ### Changed
 - Made changes to reflect deprecation of ioutil
 - Updated to use Go 1.17
