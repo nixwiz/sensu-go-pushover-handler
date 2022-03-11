@@ -7,6 +7,15 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Changed
+- Made changes to reflect deprecation of ioutil
+- Updated to use Go 1.17
+- Updated dependencies
+- Changed testing of main()
+
+### Added
+- darwin-arm64 (Apple Silicon) to build releases
+
 ## [1.0.0] - 2021-06-05
 
 ### Changed
