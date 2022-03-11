@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -49,7 +49,7 @@ func TestSendPushover(t *testing.T) {
 		event.Check.Output = tc.state
 
 		var test = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			body, err := ioutil.ReadAll(r.Body)
+			body, err := io.ReadAll(r.Body)
 			assert.NoError(err)
 			expectedBody := fmt.Sprintf("expire=3600&message=%s&priority=%v&retry=60&sound=pushover&title=entity1%%2Fcheck1&token=123&user=abc", tc.state, tc.priority)
 			assert.Equal(expectedBody, strings.Trim(string(body), "\n"))
@@ -81,37 +81,42 @@ func TestSendPushover(t *testing.T) {
 	}
 }
 
-func TestMain(t *testing.T) {
-	assert := assert.New(t)
-	file, _ := ioutil.TempFile(os.TempDir(), "sensu-go-pushover-handler")
+func TestMain(m *testing.M) {
+	dir, _ := os.MkdirTemp("", "sensu-go-pushover-handler")
+	file, _ := os.CreateTemp(dir, "sensu-go-pushover-handler")
+
 	defer func() {
-		_ = os.Remove(file.Name())
+		_ = os.RemoveAll(dir)
 	}()
 
 	event := corev2.FixtureEvent("entity1", "check1")
 	event.Metrics = corev2.FixtureMetrics()
 	eventJSON, _ := json.Marshal(event)
-	_, err := file.WriteString(string(eventJSON))
-	require.NoError(t, err)
-	require.NoError(t, file.Sync())
-	_, err = file.Seek(0, 0)
-	require.NoError(t, err)
-	os.Stdin = file
-	requestReceived := false
+	if _, err := file.WriteString(string(eventJSON)); err != nil {
+		fmt.Printf("Failed to create test file, err %v\n", err)
+		os.Exit(1)
+	}
+	if _, err := file.Seek(0, 0); err != nil {
+		fmt.Printf("Failed to seek on test file, err %v\n", err)
+		os.Exit(1)
+	}
 
 	var test = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		requestReceived = true
+		// requestReceived = true
 		w.WriteHeader(http.StatusOK)
-		_, err := w.Write([]byte(`{"ok": true}`))
-		require.NoError(t, err)
+		if _, err := w.Write([]byte(`{"ok": true}`)); err != nil {
+			fmt.Printf("Failed to write HTTP response in test, err: %v", err)
+			os.Exit(1)
+		}
 	}))
 
-	_, err = url.ParseRequestURI(test.URL)
-	require.NoError(t, err)
-	oldArgs := os.Args
-	os.Args = []string{"sensu-go-pushover-handler", "--pushoverAPIURL", test.URL, "--pushoverToken", "123", "--pushoverUserKey", "abc"}
-	defer func() { os.Args = oldArgs }()
+	oldStdin := os.Stdin
+	os.Stdin = file
+	defer func() { os.Stdin = oldStdin }()
 
-	main()
-	assert.True(requestReceived)
+	config.PushoverToken = "123"
+	config.PushoverUserKey = "abc"
+	config.PushoverAPIURL = test.URL
+
+	os.Exit(m.Run())
 }
