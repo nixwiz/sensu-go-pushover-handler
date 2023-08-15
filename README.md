@@ -3,6 +3,10 @@
 ![goreleaser](https://github.com/nixwiz/sensu-go-pushover-handler/workflows/goreleaser/badge.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nixwiz/sensu-go-pushover-handler)](https://goreportcard.com/report/github.com/nixwiz/sensu-go-pushover-handler)
 
+# Project Status
+I am no longer actively involved with any Sensu development. Therefore, this
+project will not receive any further updates from me.
+
 # Sensu Go Pushover Handler
 
 ## Table of Contents
