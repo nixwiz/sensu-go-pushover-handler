@@ -7,8 +7,10 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [1.2.0] - 2024-05-07
+
 ### Changed
-- Updated to use Go 1.18
+- Updated to use Go 1.22
 - Updated dependencies
 
 ## [1.1.0] - 2022-03-11
