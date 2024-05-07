@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestcheckArgs(t *testing.T) {
+func Test_checkArgs(t *testing.T) {
 	assert := assert.New(t)
 	event := corev2.FixtureEvent("entity1", "check1")
 	assert.Error(checkArgs(event))
@@ -30,7 +30,7 @@ func TestcheckArgs(t *testing.T) {
 	assert.NoError(checkArgs(event))
 }
 
-func TestsendPushover(t *testing.T) {
+func Test_sendPushover(t *testing.T) {
 	testcases := []struct {
 		status   uint32
 		state    string
