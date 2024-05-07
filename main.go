@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"strings"
 
-	corev2 "github.com/sensu/sensu-go/api/core/v2"
+	corev2 "github.com/sensu/core/v2"
 	"github.com/sensu/sensu-plugin-sdk/sensu"
 	"github.com/sensu/sensu-plugin-sdk/templates"
 )
@@ -62,8 +62,8 @@ var (
 		},
 	}
 
-	pushoverConfigOptions = []*sensu.PluginConfigOption{
-		{
+	pushoverConfigOptions = []sensu.ConfigOption{
+		&sensu.PluginConfigOption[string]{
 			Path:      pushoverToken,
 			Env:       "SENSU_PUSHOVER_TOKEN",
 			Argument:  pushoverToken,
@@ -73,7 +73,7 @@ var (
 			Usage:     "The Pushover API token",
 			Value:     &config.PushoverToken,
 		},
-		{
+		&sensu.PluginConfigOption[string]{
 			Path:      pushoverUserKey,
 			Env:       "SENSU_PUSHOVER_USERKEY",
 			Argument:  pushoverUserKey,
@@ -83,7 +83,7 @@ var (
 			Usage:     "The Pushover API token",
 			Value:     &config.PushoverUserKey,
 		},
-		{
+		&sensu.PluginConfigOption[string]{
 			Path:      messageTitle,
 			Argument:  messageTitle,
 			Shorthand: "m",
@@ -91,7 +91,7 @@ var (
 			Usage:     "The message title template",
 			Value:     &config.MessageTitleTemplate,
 		},
-		{
+		&sensu.PluginConfigOption[string]{
 			Path:      messageSound,
 			Argument:  messageSound,
 			Shorthand: "s",
@@ -99,7 +99,7 @@ var (
 			Usage:     "The sound for the message",
 			Value:     &config.MessageSound,
 		},
-		{
+		&sensu.PluginConfigOption[string]{
 			Path:      messageBody,
 			Argument:  messageBody,
 			Shorthand: "b",
@@ -107,7 +107,7 @@ var (
 			Usage:     "The message body template",
 			Value:     &config.MessageBodyTemplate,
 		},
-		{
+		&sensu.PluginConfigOption[uint64]{
 			Path:      okPriority,
 			Argument:  okPriority,
 			Shorthand: "O",
@@ -115,7 +115,7 @@ var (
 			Usage:     "The priority for OK status messages (default 0)",
 			Value:     &config.OkPriority,
 		},
-		{
+		&sensu.PluginConfigOption[uint64]{
 			Path:      warningPriority,
 			Argument:  warningPriority,
 			Shorthand: "W",
@@ -123,7 +123,7 @@ var (
 			Usage:     "The priority for Warning status messages (default 0)",
 			Value:     &config.WarningPriority,
 		},
-		{
+		&sensu.PluginConfigOption[uint64]{
 			Path:      criticalPriority,
 			Argument:  criticalPriority,
 			Shorthand: "C",
@@ -131,7 +131,7 @@ var (
 			Usage:     "The priority for Critical status messages",
 			Value:     &config.CriticalPriority,
 		},
-		{
+		&sensu.PluginConfigOption[uint64]{
 			Path:      unknownPriority,
 			Argument:  unknownPriority,
 			Shorthand: "U",
@@ -139,7 +139,7 @@ var (
 			Usage:     "The priority for Unknown status messages",
 			Value:     &config.UnknownPriority,
 		},
-		{
+		&sensu.PluginConfigOption[uint64]{
 			Path:      emergencyRetry,
 			Argument:  emergencyRetry,
 			Shorthand: "R",
@@ -147,7 +147,7 @@ var (
 			Usage:     "How often, in seconds, to send the same notification to the user, only relevant to Priority 2 messages",
 			Value:     &config.EmergencyRetry,
 		},
-		{
+		&sensu.PluginConfigOption[uint64]{
 			Path:      emergencyExpire,
 			Argument:  emergencyExpire,
 			Shorthand: "E",
@@ -155,7 +155,7 @@ var (
 			Usage:     "How long, in seconds, to continue sending the same notification to the user, only relevant to Priority 2 messages",
 			Value:     &config.EmergencyExpire,
 		},
-		{
+		&sensu.PluginConfigOption[string]{
 			Path:      pushoverAPIURL,
 			Argument:  pushoverAPIURL,
 			Shorthand: "a",
@@ -168,12 +168,12 @@ var (
 
 func main() {
 
-	goHandler := sensu.NewGoHandler(&config.PluginConfig, pushoverConfigOptions, CheckArgs, SendPushover)
+	goHandler := sensu.NewHandler(&config.PluginConfig, pushoverConfigOptions, checkArgs, sendPushover)
 	goHandler.Execute()
 
 }
 
-func CheckArgs(_ *corev2.Event) error {
+func checkArgs(_ *corev2.Event) error {
 
 	if len(config.PushoverToken) == 0 {
 		return errors.New("missing Pushover token")
@@ -194,7 +194,7 @@ func CheckArgs(_ *corev2.Event) error {
 	return nil
 }
 
-func SendPushover(event *corev2.Event) error {
+func sendPushover(event *corev2.Event) error {
 
 	var (
 		priority string

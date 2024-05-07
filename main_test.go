@@ -11,26 +11,26 @@ import (
 	"strings"
 	"testing"
 
-	corev2 "github.com/sensu/sensu-go/api/core/v2"
+	corev2 "github.com/sensu/core/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestCheckArgs(t *testing.T) {
+func TestcheckArgs(t *testing.T) {
 	assert := assert.New(t)
 	event := corev2.FixtureEvent("entity1", "check1")
-	assert.Error(CheckArgs(event))
+	assert.Error(checkArgs(event))
 	config.PushoverToken = "abc123"
-	assert.Error(CheckArgs(event))
+	assert.Error(checkArgs(event))
 	config.PushoverUserKey = "abc123"
-	assert.Error(CheckArgs(event))
+	assert.Error(checkArgs(event))
 	config.MessageTitleTemplate = "{{.Entity.Name}}/{{.Check.Name}}"
-	assert.Error(CheckArgs(event))
+	assert.Error(checkArgs(event))
 	config.MessageBodyTemplate = "{{.Check.Output}}"
-	assert.NoError(CheckArgs(event))
+	assert.NoError(checkArgs(event))
 }
 
-func TestSendPushover(t *testing.T) {
+func TestsendPushover(t *testing.T) {
 	testcases := []struct {
 		status   uint32
 		state    string
@@ -77,7 +77,7 @@ func TestSendPushover(t *testing.T) {
 		config.EmergencyExpire = 3600
 		config.PushoverToken = "123"
 		config.PushoverUserKey = "abc"
-		assert.NoError(SendPushover(event))
+		assert.NoError(sendPushover(event))
 	}
 }
 
