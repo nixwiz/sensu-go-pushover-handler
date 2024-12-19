@@ -1,8 +1,6 @@
 module github.com/nixwiz/sensu-go-pushover-handler
 
-go 1.22.0
-
-toolchain go1.23.4
+go 1.22
 
 require (
 	github.com/sensu/core/v2 v2.20.0
