@@ -7,6 +7,11 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [1.2.3] - 2024-12-18
+
+### Changed
+- Fixed GitHub action for goreleaser
+
 ## [1.2.2] - 2024-12-18
 
 ### Changed
