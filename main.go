@@ -233,24 +233,29 @@ func sendPushover(event *corev2.Event) error {
 
 	resp, err := http.PostForm(config.PushoverAPIURL, pushoverForm)
 	if err != nil {
-		return fmt.Errorf("Post to %s failed: %s", config.PushoverAPIURL, err)
+		return fmt.Errorf("post to %s failed: %s", config.PushoverAPIURL, err)
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return fmt.Errorf("POST to %s failed with %v", config.PushoverAPIURL, resp.Status)
+		return fmt.Errorf("http POST to %s failed with %v", config.PushoverAPIURL, resp.Status)
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		// drain anything left in the body and close it, to ensure we can take advantage of keep alive
+		// this is best-efforts so any errors here are not important
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return fmt.Errorf("Failed to read response body from %s: %v", config.PushoverAPIURL, err)
+		return fmt.Errorf("failed to read response body from %s: %v", config.PushoverAPIURL, err)
 	}
 
 	pushoverResponse := PushoverResponse{}
 	err = json.Unmarshal(body, &pushoverResponse)
 	if err != nil {
-		return fmt.Errorf("Failed to unmarshal resonse from Pushover: %v", err)
+		return fmt.Errorf("failed to unmarshal resonse from Pushover: %v", err)
 	}
 
 	// FUTURE: send to AH
