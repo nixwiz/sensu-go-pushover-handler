@@ -11,6 +11,7 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### Changed
 - Update dependencies to address security issue
+- Fix GitHub actions
 
 ## [1.2.7] - 2026-08-07
 
